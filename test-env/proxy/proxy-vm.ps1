@@ -21,6 +21,13 @@ Write-Output "Script Path: $scriptPath"
 Write-Output "Script Directory: $scriptDirectory"
 
 ReadVariablesFromFile -path ".env"
+$squidCert_pem = "${squidCert_dir}/${certfile_pem}"
+$squidCert_der = "${squidCert_dir}/${certfile_der}"
+$squidCert_subcject = "/C=US/ST=CA/L=LA/O=IT/CN=${proxy_VmName}.mshome.net"
+
+Write-Verbose "squidCert_pem: $squidCert_pem"
+Write-Verbose "squidCert_der: $squidCert_der"
+Write-Verbose "squidCert_subcject: $squidCert_subcject"
 
 function CreateVm {
     Write-Output "Creating VM $proxy_VmName"
@@ -48,14 +55,7 @@ function CreateVm {
 function ConfigureCerts {
 
     Write-Host "Configuring Certs"
-    $squidCert_pem = "${squidCert_dir}/${certfile_pem}"
-    $squidCert_der = "${squidCert_dir}/${certfile_der}"
-    $squidCert_subcject = "/C=US/ST=CA/L=LA/O=IT/CN=${proxy_VmName}.mshome.net"
-
-    Write-Verbose "squidCert_pem: $squidCert_pem"
-    Write-Verbose "squidCert_der: $squidCert_der"
-    Write-Verbose "squidCert_subcject: $squidCert_subcject"
-    
+   
 
     Write-Output "Creating a self-signed certificate"
     multipass exec $proxy_VmName -- sudo rm -rf $squidCert_dir
@@ -86,13 +86,14 @@ function ConfigureCerts {
     Write-Output "create certs on the fly"
     multipass exec $proxy_VmName -- sudo rm -rf ${ssl_db_dir}
     multipass exec $proxy_VmName -- sudo /usr/lib/squid/security_file_certgen -c -s ${ssl_db_dir} -M 4MB
-    multipass exec $proxy_VmName -- sudo chown -R $squidCert_owner /var/squid
-    multipass exec $proxy_VmName -- sudo chmod -R 755 /var/squid
+    multipass exec $proxy_VmName -- sudo chown -R $squidCert_owner ${ssl_db_dir}
+    multipass exec $proxy_VmName -- sudo chmod -R 755 ${ssl_db_dir}
     multipass exec $proxy_VmName -- sudo ls -al ${ssl_db_dir}
 }
 
 function ConfigureSquid {
     Write-Output "Configuring Squid"
+
     multipass exec $proxy_VmName -- sudo rm -rf /etc/squid/squid.conf
 
     $configuration = @(
