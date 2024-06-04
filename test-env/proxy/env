@@ -1,0 +1,14 @@
+proxy_VmName=squid-vm
+client_vmName=proxy-client
+
+certfile_der=squid_proxyCA.der
+certfile_crt=squid_proxyCA.crt
+certfile_pem=squid_proxyCA.pem
+
+squidCert_dir=/etc/squid/cert
+squidCert_owner=proxy:proxy
+ssl_db_dir=/var/lib/ssl_db
+
+openssl_cfg_file=/etc/squid/openssl.cfg
+
+
