@@ -1,23 +1,32 @@
-
 <#
 .SYNOPSIS
-Downloads a file from a specified URL.
+Gets the file name from a given URL.
 
 .DESCRIPTION
-The Get-FileFromUrl function downloads a file from a specified URL and saves it to the local machine.
+The Get-FileNameFromUrl function retrieves the file name from a specified URL by sending a HEAD request and extracting the file name from the 'Content-Disposition' header.
 
 .PARAMETER Url
-The URL of the file to download.
-
-.PARAMETER Destination
-The local path where the downloaded file will be saved.
+The URL from which to retrieve the file name.
 
 .EXAMPLE
-Get-FileFromUrl -Url "https://example.com/file.txt" -Destination "C:\Downloads\file.txt"
-Downloads the file from the specified URL and saves it to the specified destination.
+$fileName = Get-FileNameFromUrl -Url "https://example.com/files/document.pdf"
+This example retrieves the file name from the specified URL and assigns it to the $fileName variable.
+
+.INPUTS
+[string]
+The function accepts a string parameter representing the URL.
+
+.OUTPUTS
+[string]
+The function returns a string representing the file name extracted from the URL.
+
+.NOTES
+This function requires an internet connection to send the HTTP request and retrieve the file name.
+
+.LINK
+https://example.com/documentation/Get-FileNameFromUrl
 
 #>
-
 function Get-FileNameFromUrl {
     param (
         [Parameter(Mandatory = $True)]
@@ -45,6 +54,38 @@ function Get-FileNameFromUrl {
     }
 }
 
+
+<#
+.SYNOPSIS
+Downloads a file from a specified URL to a destination directory.
+
+.DESCRIPTION
+The Get-FileFromUrl function downloads a file from a specified URL to a destination directory. If the destination directory does not exist, it will be created. 
+The function also supports optional parameters for force downloading and specifying a custom file name.
+
+.PARAMETER Url
+The URL of the file to download.
+
+.PARAMETER DestinationDirectory
+The directory where the downloaded file will be saved.
+
+.PARAMETER ForceDownload
+Specifies whether to force download the file even if it already exists in the destination directory. The default value is False.
+
+.PARAMETER FileName
+The custom file name to use for the downloaded file. If not specified, the function will attempt to extract the file name from the URL.
+
+.EXAMPLE
+PS> Get-FileFromUrl -Url "https://example.com/file.txt" -DestinationDirectory "C:\Downloads"
+
+This example downloads the file "file.txt" from the specified URL and saves it to the "C:\Downloads" directory.
+
+.EXAMPLE
+PS> Get-FileFromUrl -Url "https://example.com/file.txt" -DestinationDirectory "C:\Downloads" -ForceDownload $true
+
+This example downloads the file "file.txt" from the specified URL and saves it to the "C:\Downloads" directory, even if the file already exists in the destination directory.
+
+#>
 function Get-FileFromUrl {
     param (
         [Parameter(Mandatory = $True)]
