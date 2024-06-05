@@ -16,7 +16,7 @@ function ReadEnvFromFile {
     )
 
     Get-Content $path | ForEach-Object {
-        $name, $value = $_.split('=')
+        $name, $value = $_.replace('export ', '').split('=')
         if ([string]::IsNullOrWhiteSpace($name) || $name.Contains('#')) {
           continue
         }
@@ -41,7 +41,7 @@ function ReadVariablesFromFile {
     )
 
     Get-Content $path | ForEach-Object {
-        $name, $value = $_.split('=')
+        $name, $value = $_.replace('export ', '').split('=')
         if ([string]::IsNullOrWhiteSpace($name) || $name.Contains('#')) {
             return
         }

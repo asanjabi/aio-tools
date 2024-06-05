@@ -1,14 +1,36 @@
-proxy_VmName=squid-vm
-client_vmName=proxy-client
+export proxy_VmName=squid-vm
+export client_vmName=proxy-client
 
-certfile_der=squid_proxyCA.der
-certfile_crt=squid_proxyCA.crt
-certfile_pem=squid_proxyCA.pem
+export certfile_der=squid_proxyCA.der
+export certfile_crt=squid_proxyCA.crt
+export certfile_pem=squid_proxyCA.pem
 
-squidCert_dir=/etc/squid/cert
-squidCert_owner=proxy:proxy
-ssl_db_dir=/var/lib/ssl_db
+export squidCert_dir=/etc/squid/cert
+export squidCert_owner=proxy:proxy
+export ssl_db_dir=/var/lib/ssl_db
 
-openssl_cfg_file=/etc/squid/openssl.cfg
+export openssl_cfg_file=/etc/squid/openssl.cfg
 
 
+# IoT Operations Settings
+###################################################################################################
+# Id of the tenant you are using
+export TENANT_ID="<tenant-id>"
+
+# Id of the subscription where your resource group and Arc-enabled cluster will be created
+export SUBSCRIPTION_ID="<subscription-id>"
+
+
+# Azure region where the created resource group will be located
+# Currently supported regions: "eastus", "eastus2", "westus", "westus2", "westus3", "westeurope", or "northeurope"
+export LOCATION=westus
+
+# Name of a new resource group to create which will hold the Arc-enabled cluster and Azure IoT Operations resources
+export RESOURCE_GROUP=<resource-group-name>
+
+# Name of the Arc-enabled cluster to create in your resource group
+export CLUSTER_NAME=<arc-cluster-name>
+
+
+# name of the keyvault to use
+export KEYVAULT_NAME=<keyvault-name>

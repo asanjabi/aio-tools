@@ -6,8 +6,8 @@ Steps to create the proxy VM and Client using multipass
 3. Create the proxy server by calling .\proxy-vm.ps1 -Rebuild
 4. Create the proxy client by calling .\client-vm.ps1 -Rebuild
 
-To connect to proxy added the environment variables in `proxy` file
-`source proxy` after logging in or add it to your .bashrc file `cat proxy >> .bashrc`
+To connect to proxy added the environment variables in `proxy_env` file
+`source proxy_env` after logging in or add it to your .bashrc file `cat proxy_env >> .bashrc`
 
 To use Azure CLI with proxy, after installing the CLI run `sudo setup_az_cli_cert.sh` once.  This script will: 
    * Copy the certificate file to your home directory, this is for testing in real life it should be somwhere safer.
