@@ -1,5 +1,5 @@
 using module "../../tools/pwsh/Tools.psm1"
-
+[CmdletBinding()]
 param (
     [switch]$Create,
     [switch]$ConfigureCerts,

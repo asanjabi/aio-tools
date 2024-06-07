@@ -1,5 +1,5 @@
 using module "../../tools/pwsh/Tools.psm1"
-
+[CmdletBinding()]
 param (
     [switch]$SetupEnv,
     [switch]$InstallK3s,
@@ -16,11 +16,12 @@ param (
 ReadVariablesFromFile ".env"
 $vm = $client_vmName
 
-function copy_script {
+
+
+function copy_and_run_script {
     param (
         [string]$script
     )
-
     multipass exec $vm -- mkdir -p logs
     multipass exec $vm -- mkdir -p scripts
     multipass transfer ./.env ${vm}:.
@@ -28,16 +29,8 @@ function copy_script {
     multipass exec $vm -- bash -c "vim ~/.env -c ""set ff=unix"" -c "":wq"""
     multipass exec $vm -- bash -c "vim ~/scripts/$script -c ""set ff=unix"" -c "":wq"""
     multipass exec $vm -- bash -c "chmod +x ~/scripts/$script"
-}
-
-function copy_and_run_script {
-    param (
-        [string]$script
-    )
-    copy_script $script
     
-    multipass exec $vm -- bash -c "~/scripts/$script >> ~/logs/$script.log 2>&1"
-    #multipass exec $vm -- bash -c "cat ~/logs/$script.log"
+    multipass exec $vm -- bash -c "bash -i <<< ""~/scripts/$script 2>&1 | tee ~/logs/$script.log """
 }
 
 function SetupEnv{
@@ -64,9 +57,7 @@ function InstallCLIExtensions {
 
 function Login {
     Write-Output "Logging in"
-    copy_script "login.sh"
-    # Run bash interactively and run the login script
-    multipass exec $vm -- bash -c 'bash -i <<< ~/scripts/login.sh'
+    copy_and_run_script "login.sh"
 }
 
 function RegisterAzureExtensions {

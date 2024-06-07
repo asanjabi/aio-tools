@@ -1,7 +1,9 @@
 using module "../../tools/pwsh/Tools.psm1"
 
+[CmdletBinding()]
 param (
     [switch]$Create,
+    [switch]$Configure,
     [switch]$Delete,
     [switch]$Rebuild
 )
@@ -29,10 +31,13 @@ function copy_and_run_script {
 function CreateVm {
     Write-Output "Creating VM $vm"
     multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G
+}
 
-    # copy the proxy certificate over to the client
+function ConfigureVM {
+    Write-Output "copying the proxy certificate over to the client"
     multipass transfer ${certfile_der} ${vm}:.  
     
+    Write-Output "Running setup_client_vm.sh script on the client VM"
     copy_and_run_script "setup_client_vm.sh"
 }
 
@@ -46,18 +51,26 @@ function RebuildVm {
     Write-Output "Rebuilding VM $vm"
     DeleteVm
     CreateVm
+    ConfigureVM
 }
 
 if ($Create) {
     CreateVm
 }
-elseif ($Delete) {
+
+if ($Configure) {
+    ConfigureVM
+}
+
+if ($Delete) {
     DeleteVm
 }
-elseif ($Rebuild) {
+
+if ($Rebuild) {
     RebuildVm
 }
-else {
+
+if($Create -eq $false -and $Configure -eq $false -and $Delete -eq $false -and $Rebuild -eq $false) {
     Write-Output "Usage: client.ps1 -Create | -Delete | -Rebuild"
 }
 

@@ -1,12 +1,11 @@
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
 
 proxyUrl="http://$proxy_VmName.mshome.net:3128"
-echo proxyUrl
+echo $proxyUrl
 
-echo "Updating $vm"
+echo "Updating $proxy_VmName"
 sudo apt update
 sudo NEEDRESTART_MODE=a apt upgrade -y
 
@@ -43,7 +42,9 @@ echo Acquire::https:Proxy "\"$proxyUrl\""\; | sudo tee -a  /etc/apt/apt.conf
 
 # Create a shell script to prepare the certificate bundle for Azure CLI after it is installed
 # Run this script after Azure CLI is installed to setup the new certificate bundle
-rm setup_az_cli_cert.sh
+# This script will find a file named cacert.pem in the Azure CLI installation 
+# Copies it locally and and appends the proxy's certificate to it
+rm -f setup_az_cli_cert.sh
 echo 'find /opt/az/lib/*/site-packages/certifi -name cacert.pem -exec cp ""{}"" ~/ \;' >> ~/setup_az_cli_cert.sh
 echo 'cat $certfile_crt >> ~/cacert.pem' >> ~/setup_az_cli_cert.sh
 

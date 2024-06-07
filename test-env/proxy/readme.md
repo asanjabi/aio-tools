@@ -32,6 +32,19 @@ Client-vm.ps1
    -Delete           Deletes the VM
    -Rebuild          Runs Delete, Create in order
 
+aio-config.ps1
+If running individual commands run them in this order
+    -SetupEnv              Setup .bashrc and proxy values
+    -InstallK3s            Install K3S using quick start script and few required tweaks
+    -InstallAzureCLI       Install Azure CLI
+    -InstallCLIExtensions  Install the required CLI extensions
+    -Login                 Login to Azure, using device flow
+    -RegisterAzureExtensions  Register required extensions for your subscription
+    -CreateAzureResources  Create a resource group and Key Vault
+    -ConnectCluster        Connect K3s to Arc
+    -IntallAio             Install Azure Iot Opeations extensions
+    
+    -InstallAll            Do all of the above in order
 
 tail-proxy-log.ps1   Watch the proxy logs
 connect-client.ps1   SSh into the client VM
