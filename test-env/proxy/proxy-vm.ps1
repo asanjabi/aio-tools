@@ -62,11 +62,9 @@ function ConfigureCerts {
     multipass exec $proxy_VmName -- sudo mkdir $squidCert_dir
 
     $sslConfig = @(
-        "[ v3_req ]",
-        "basicConstraints = CA:FALSE",
-        "keyUsage = nonRepudiation, digitalSignature, keyEncipherment",
         "[ v3_ca ]",
-        "keyUsage = cRLSign, keyCertSign"
+        "basicConstraints = critical,CA:TRUE",
+        "keyUsage = nonRepudiation, digitalSignature, keyEncipherment, cRLSign, keyCertSign"
     )
     
     foreach ($line in $sslConfig) {

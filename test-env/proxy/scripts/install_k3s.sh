@@ -4,11 +4,20 @@ set -exuo pipefail
 source ~/.env
 source ~/proxy_env
 
+# Set the no_proxy environment variable so that the k3s installation will pick it up.
+export no_proxy=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+
+#also add the no_proxy to the .bashrc file and the proxy_env file
+echo no_proxy=$no_proxy >> ~/.bashrc
+echo no_proxy=$no_proxy >> ~/proxy_env
 
 echo "Installing k3s"
 curl -sfL https://get.k3s.io | sh -
 
-# Copy the kubeconfig file to the host
+# write this to logs so that we can see the environment variables that were set
+sudo cat /etc/systemd/system/k3s.service.env
+
+# Copy the kubeconfig file to the user's home directory
 mkdir ~/.kube
 sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 sudo chown ubuntu:ubuntu ~/.kube/config

@@ -25,7 +25,8 @@ function copy_and_run_script {
     multipass exec $vm -- bash -c "vim ~/scripts/$script -c ""set ff=unix"" -c "":wq"""
     multipass exec $vm -- bash -c "chmod +x ~/scripts/$script"
     
-    multipass exec $vm -- bash -c "~/scripts/$script >> ~/logs/$script.log 2>&1"
+    #multipass exec $vm -- bash -c "~/scripts/$script >> ~/logs/$script.log 2>&1"
+    multipass exec $vm -- bash -c "bash -i <<< ""~/scripts/$script 2>&1 | tee ~/logs/$script.log """
 }
 
 function CreateVm {

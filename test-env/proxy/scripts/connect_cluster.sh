@@ -12,12 +12,12 @@ source ~/proxy_env
 
 control_plane_ip=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk -F'//' '{print $2}' | awk -F':' '{print $1}')
 kubernetes_service_ip=$(kubectl get svc kubernetes -o jsonpath='{.spec.clusterIP}')
-echo "Cluster IP: $cluster_ip"
+echo "Control Plame IP: $control_plane_ip"
 echo "Kubernetes Service IP: $kubernetes_service_ip"
 
 az connectedk8s connect -n $CLUSTER_NAME -l $LOCATION -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID \
     --proxy-https $https_proxy --proxy-http $http_proxy \
-    --proxy-skip-range $control_plane_ip,$kubernetes_service_ip \
+    --proxy-skip-range $control_plane_ip,$kubernetes_service_ip,127.0.0.0/16 \
     --proxy-cert $certfile_crt \
     --debug
   

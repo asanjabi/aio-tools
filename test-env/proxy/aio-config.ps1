@@ -10,7 +10,8 @@ param (
     [switch]$CreateAzureResources,
     [switch]$ConnectCluster,
     [switch]$IntallAio,
-    [switch]$InstallAll
+    [switch]$InstallAll,
+    [switch]$DeleteAzureResources
 )
 
 ReadVariablesFromFile ".env"
@@ -79,6 +80,13 @@ function InstallAio{
     Write-Output "Installing AIO"
     copy_and_run_script "install_aio.sh"
 }
+
+function DeleteAzureResources{
+    Write-Output "Deleting Azure Resources"
+    copy_and_run_script "delete_azure_resources.sh"
+}
+
+
 if($SetupEnv) {
     Write-Output "Setting up environment"
     SetupEnv
@@ -125,6 +133,10 @@ if ($InstallAll) {
     CreateAzureResources
     ConnectCluster
     InstallAio
+}
+
+if ($DeleteAzureResources) {
+    DeleteAzureResources
 }
 
 Remove-Module -name tools
