@@ -10,7 +10,7 @@ param (
     [switch]$CreateAzureResources,
     [switch]$ConnectCluster,
     [switch]$IntallAio,
-    [switch]$InstallAio,
+    [switch]$InstallAll,
     [switch]$DeleteAzureResources
 )
 
