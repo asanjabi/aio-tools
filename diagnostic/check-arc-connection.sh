@@ -45,9 +45,9 @@ check-url https://k8sconnectcsp.azureedge.net
 ###########
 #check-url https://*.servicebus.windows.net
 sburls=$(curl -s "https://guestnotificationservice.azure.com/urls/allowlist?api-version=2020-01-01&location=$REGION")
-# echo "$response" | jq -r '.[]'
+# echo "$sburls" | jq -r '.[]'
 
-echo "$response" | jq -r '.[]' | while read -r line; do
+echo "$sburls" | jq -r '.[]' | while read -r line; do
     check-url "$line"
 done
 
