@@ -6,18 +6,16 @@ param (
     [switch]$InstallAzureCLI,
     [switch]$InstallCLIExtensions,
     [switch]$Login,
-    [switch]$RegisterAzureExtensions,
+    [switch]$RegisterProviders,
     [switch]$CreateAzureResources,
     [switch]$ConnectCluster,
     [switch]$IntallAio,
-    [switch]$InstallAll,
+    [switch]$InstallAio,
     [switch]$DeleteAzureResources
 )
 
 ReadVariablesFromFile ".env"
 $vm = $client_vmName
-
-
 
 function copy_and_run_script {
     param (
@@ -34,109 +32,59 @@ function copy_and_run_script {
     multipass exec $vm -- bash -c "bash -i <<< ""~/scripts/$script 2>&1 | tee ~/logs/$script.log """
 }
 
-function SetupEnv{
-    Write-Output "Setting up environment"
-    copy_and_run_script "setup_env.sh"
-}
 
-function InstallK3S {
-    Write-Output "Installing k3s"
-    copy_and_run_script "install_k3s.sh"
-}
-
-function InstallAzureCLI {
-    Write-Output "Installing Azure CLI"
-    copy_and_run_script "install_azure_cli.sh"
-}
-
-
-function InstallCLIExtensions {
-    Write-Output "Installing extensions"
-    copy_and_run_script "install_cli_extensions.sh"
-}
-
-
-function Login {
-    Write-Output "Logging in"
-    copy_and_run_script "login.sh"
-}
-
-function RegisterAzureExtensions {
-    Write-Output "Registering Azure Extensions"
-    copy_and_run_script "register_azure_extensions.sh"
-}
-
-function CreateAzureResources{
-    Write-Output "Creating Azure Resources"
-    copy_and_run_script "create_azure_resources.sh"
-}
-
-function ConnectCluster{
-    Write-Output "Connecting Cluster"
-    copy_and_run_script "connect_cluster.sh"
-}
- 
-function InstallAio{
-    Write-Output "Installing AIO"
-    copy_and_run_script "install_aio.sh"
-}
-
-function DeleteAzureResources{
-    Write-Output "Deleting Azure Resources"
-    copy_and_run_script "delete_azure_resources.sh"
-}
-
-
-if($SetupEnv) {
-    Write-Output "Setting up environment"
-    SetupEnv
-}
-if($InstallK3s) {
-    Write-Output "Installing k3s"
-    InstallK3S
-}
-if($InstallAzureCLI) {
-    Write-Output "Installing Azure CLI"
-    InstallAzureCLI
-}
-if($InstallCLIExtensions) {
-    Write-Output "Installing CLI Extensions"
-    InstallCLIExtensions
-}
-if($Login) {
-    Write-Output "Logging in"
-    Login
-}
-if($RegisterAzureExtensions) {
-    Write-Output "Registering Azure Extensions"
-    RegisterAzureExtensions
-}
-if($CreateAzureResources) {
-    Write-Output "Creating Azure Resources"
-    CreateAzureResources
-}
-if($ConnectCluster) {
-    Write-Output "Connecting Cluster"
-    ConnectCluster
-}
-if($IntallAio) {
-    Write-Output "Installing AIO"
-    InstallAio
-}
 if ($InstallAll) {
-    SetupEnv
-    InstallK3S
-    InstallAzureCLI
-    InstallCLIExtensions
-    Login
-    RegisterAzureExtensions
-    CreateAzureResources
-    ConnectCluster
-    InstallAio
+    $SetupEnv = $true
+    $InstallK3s = $true
+    $InstallAzureCLI = $true
+    $InstallCLIExtensions = $true
+    $Login = $true
+    $RegisterProviders = $true
+    $CreateAzureResources = $true
+    $ConnectCluster = $true
+    $InstallAio = $true
 }
 
 if ($DeleteAzureResources) {
-    DeleteAzureResources
+    Write-Output "Deleting Azure Resources"
+    copy_and_run_script "azure_delete_resources.sh"
+}
+
+if($SetupEnv) {
+    Write-Output "Setting up environment"
+    copy_and_run_script "env_setup.sh"
+}
+if($InstallK3s) {
+    Write-Output "Installing k3s"
+    copy_and_run_script "k3s_install.sh"
+}
+if($InstallAzureCLI) {
+    Write-Output "Installing Azure CLI"
+    copy_and_run_script "cli_install.sh"
+}
+if($InstallCLIExtensions) {
+    Write-Output "Installing extensions"
+    copy_and_run_script "cli_extensions_install.sh"
+}
+if($Login) {
+    Write-Output "Logging in"
+    copy_and_run_script "azure_login.sh"
+}
+if($RegisterProviders) {
+    Write-Output "Registering Azure Extensions"
+    copy_and_run_script "azure_subscription_register_providers.sh"
+}
+if($CreateAzureResources) {
+    Write-Output "Creating Azure Resources"
+    copy_and_run_script "azure_create_resources.sh"
+}
+if($ConnectCluster) {
+    Write-Output "Connecting Cluster"
+    copy_and_run_script "arc_connect_cluster.sh"
+}
+if($InstallAio) {
+    Write-Output "Installing AIO"
+    copy_and_run_script "aio_install.sh"
 }
 
 Remove-Module -name tools

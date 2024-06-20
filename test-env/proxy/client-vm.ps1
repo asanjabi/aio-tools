@@ -39,7 +39,7 @@ function ConfigureVM {
     multipass transfer ${certfile_der} ${vm}:.  
     
     Write-Output "Running setup_client_vm.sh script on the client VM"
-    copy_and_run_script "setup_client_vm.sh"
+    copy_and_run_script "client_vm_configure.sh"
 }
 
 function DeleteVm {

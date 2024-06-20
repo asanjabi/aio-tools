@@ -1,7 +1,7 @@
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
+source ~/additional_env
 
 
 if az group show --name $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID &>/dev/null; then

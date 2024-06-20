@@ -1,17 +1,17 @@
-#Install k3s, source the proxy_env file to set the proxy settings first
+#Install k3s, source the additional_env file to set the proxy settings first
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
+source ~/additional_env
 
 # Set the no_proxy environment variable so that the k3s installation will pick it up.
 export no_proxy=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 
-#also add the no_proxy to the .bashrc file and the proxy_env file
+#also add the no_proxy to the .bashrc file and the additional_env file
 echo no_proxy=$no_proxy >> ~/.bashrc
-echo no_proxy=$no_proxy >> ~/proxy_env
+echo no_proxy=$no_proxy >> ~/additional_env
 
-echo "Installing k3s"
+echo "Installing k3s using quick install script"
 curl -sfL https://get.k3s.io | sh -
 
 # write this to logs so that we can see the environment variables that were set
@@ -38,5 +38,11 @@ sudo sysctl -p
 cat /proc/sys/fs/inotify/max_user_instances
 cat /proc/sys/fs/inotify/max_user_watches
 cat /proc/sys/fs/file-max
+
+# Install k9s
+sudo snap install k9s
+#bun in installer
+sudo ln -s /snap/k9s/current/bin/k9s /usr/bin
+
 
 set +exuo pipefail

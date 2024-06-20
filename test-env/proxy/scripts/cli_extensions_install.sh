@@ -1,7 +1,7 @@
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
+source ~/additional_env
 az extension add --name connectedk8s
 az extension add --name azure-iot-ops
 az extension add --name customlocation

@@ -1,8 +1,8 @@
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
-cat proxy_env >> .bashrc
+source ~/additional_env
+cat additional_env >> .bashrc
 
 vim ~/.bashrc -c "set ff=unix" -c ":wq"
 

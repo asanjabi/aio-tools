@@ -32,25 +32,17 @@ sudo ufw allow out 3128/tcp
 sudo ufw deny out on eth0
 
 # Set the proxy settings
-sh -c "echo export http_proxy=$proxyUrl >> ~/proxy_env"
-sh -c "echo export https_proxy=$proxyUrl >> ~/proxy_env"
-sh -c "echo export proxy_cert=/usr/local/share/ca-certificates/$certfile_crt >> ~/proxy_env"
+sh -c "echo export http_proxy=$proxyUrl >> ~/additional_env"
+sh -c "echo export https_proxy=$proxyUrl >> ~/additional_env"
+sh -c "echo export proxy_cert=/usr/local/share/ca-certificates/$certfile_crt >> ~/additional_env"
 
 # Set the proxy settings for apt
 echo Acquire::http::Proxy "\"$proxyUrl\""\; | sudo tee -a  /etc/apt/apt.conf
 echo Acquire::https:Proxy "\"$proxyUrl\""\; | sudo tee -a  /etc/apt/apt.conf
 
-# Create a shell script to prepare the certificate bundle for Azure CLI after it is installed
-# Run this script after Azure CLI is installed to setup the new certificate bundle
-# This script will find a file named cacert.pem in the Azure CLI installation 
-# Copies it locally and and appends the proxy's certificate to it
-rm -f setup_az_cli_cert.sh
-echo 'find /opt/az/lib/*/site-packages/certifi -name cacert.pem -exec cp ""{}"" ~/ \;' >> ~/setup_az_cli_cert.sh
-echo 'cat $certfile_crt >> ~/cacert.pem' >> ~/setup_az_cli_cert.sh
-
-# Add the new certificate bundle for Azure CLI to use
-echo export REQUESTS_CA_BUNDLE=~/cacert.pem >> ~/proxy_env
-chmod +x setup_az_cli_cert.sh
-#cat setup_az_cli_cert.sh
+# Configure snap to work behind proxy
+sudo snap set system proxy.http="$proxyUrl"
+sudo snap set system proxy.https="$proxyUrl"
+sudo systemctl restart snapd
 
 set +exuo pipefail

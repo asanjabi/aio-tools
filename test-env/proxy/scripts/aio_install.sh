@@ -1,7 +1,7 @@
 set -exuo pipefail
 
 source ~/.env
-source ~/proxy_env
+source ~/additional_env
 
 az iot ops verify-host
 export KEYVAULT_ID=$(az keyvault show -n $KEYVAULT_NAME -g $RESOURCE_GROUP --query id -o tsv)
