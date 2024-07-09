@@ -5,13 +5,19 @@ param (
     [switch]$Create,
     [switch]$Configure,
     [switch]$Delete,
-    [switch]$Rebuild
+    [switch]$Rebuild,
+    [string]$CloudInitFile = $null
 )
 
 ReadVariablesFromFile ".env"
 
 
 $vm = $client_vmName
+$cloudInit = $client_cloudInit
+
+if($CloudInitFile -ne $null -and $CloudInitFile -ne '') {
+    $cloudInit = $CloudInitFile
+}
 
 function copy_and_run_script {
     param (
@@ -31,7 +37,14 @@ function copy_and_run_script {
 
 function CreateVm {
     Write-Output "Creating VM $vm"
-    multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G
+
+    $ci_segment=""
+    if($null -ne $cloudInit) {
+        # $ci_segment = "----cloud-init $cloudInit"
+        multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G --cloud-init $cloudInit
+    }else{
+        multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G $ci_segment
+    }
 }
 
 function ConfigureVM {
