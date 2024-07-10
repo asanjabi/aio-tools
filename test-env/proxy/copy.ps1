@@ -6,8 +6,7 @@ param (
 ReadVariablesFromFile ".env"
 
 $vmName = $client_VmName
-code --remote ssh-remote+$ubuntu@$vmName.mshome.net /home/ubuntu
-
+multipass transfer -r ..\..\ ${vmName}:/home/ubuntu/aio
 
 
 Remove-Module -name tools
