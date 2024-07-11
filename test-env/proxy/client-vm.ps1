@@ -43,7 +43,7 @@ function CreateVm {
         # $ci_segment = "----cloud-init $cloudInit"
         multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G --cloud-init $cloudInit
     }else{
-        multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G $ci_segment
+        multipass launch 22.04 --name $vm -c 8 -m 16G -d 20G
     }
 }
 
