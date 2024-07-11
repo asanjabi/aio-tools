@@ -11,7 +11,9 @@ param (
     [switch]$ConnectCluster,
     [switch]$IntallAio,
     [switch]$InstallAll,
-    [switch]$DeleteAzureResources
+    [switch]$DeleteAzureResources,
+    [switch]$Help,
+    [switch]$H
 )
 
 ReadVariablesFromFile ".env"
@@ -85,6 +87,28 @@ if($ConnectCluster) {
 if($InstallAio) {
     Write-Output "Installing AIO"
     copy_and_run_script "aio_install.sh"
+}
+
+if($Help -or $H) {
+    $usage = @"
+    Following options are available, you should run them in order, and can specify multiple options at once:
+    
+    -SetupEnv
+    -InstallK3s
+    -InstallAzureCLI
+    -InstallCLIExtensions
+    -Login (Interacitve login to Azure)
+    -RegisterProviders (Register Azure providers for your subscription, required only once per subscription)
+    -CreateAzureResources
+    -ConnectCluster
+    -IntallAio
+
+    Other options:
+    -InstallAll (Runs all the above options)
+    -DeleteAzureResources (Deletes all the Azure resources created by the script)
+"@
+
+    Write-Output "$usage"
 }
 
 Remove-Module -name tools
