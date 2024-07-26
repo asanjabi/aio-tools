@@ -2,12 +2,13 @@ using module "../../tools/pwsh/Tools.psm1"
 [CmdletBinding()]
 param (
     [switch]$SetupEnv,
-    [switch]$InstallK3s,
     [switch]$InstallAzureCLI,
     [switch]$InstallCLIExtensions,
     [switch]$Login,
     [switch]$RegisterProviders,
     [switch]$CreateAzureResources,
+    [switch]$InstallK3s,
+    [switch]$GetKubeConfigSettings,
     [switch]$ConnectCluster,
     [switch]$IntallAio,
     [switch]$InstallAll,
@@ -56,10 +57,6 @@ if($SetupEnv) {
     Write-Output "Setting up environment"
     copy_and_run_script "env_setup.sh"
 }
-if($InstallK3s) {
-    Write-Output "Installing k3s"
-    copy_and_run_script "k3s_install.sh"
-}
 if($InstallAzureCLI) {
     Write-Output "Installing Azure CLI"
     copy_and_run_script "cli_install.sh"
@@ -79,6 +76,32 @@ if($RegisterProviders) {
 if($CreateAzureResources) {
     Write-Output "Creating Azure Resources"
     copy_and_run_script "azure_create_resources.sh"
+}
+if($InstallK3s) {
+    Write-Output "Installing k3s"
+    copy_and_run_script "k3s_install.sh"
+}
+if($GetKubeConfigSettings) {
+    Write-Output "Getting kubeconfig settings"
+    multipass exec $vm -- sudo cp /etc/rancher/k3s/k3s.yaml ./k3s.yaml
+    multipass exec $vm -- sudo chown ubuntu:ubuntu ./k3s.yaml
+    multipass transfer ${vm}:./k3s.yaml ./k3s.yaml
+
+    $fullPath = Join-Path -Path $PWD.Path -ChildPath "k3s.yaml"
+    Write-Output $fullPath
+    Set-Item -Path Env:KUBECONFIG -Value $fullPath
+
+
+
+    Remove-Item -Path Env:KUBECONFIG
+    
+    # mkdir ~/.kube
+    # sudo KUBECONFIG=~/.kube/config:/etc/rancher/k3s/k3s.yaml kubectl config view --flatten > ~/.kube/merged
+    # mv ~/.kube/merged ~/.kube/config
+    # chmod  0600 ~/.kube/config
+    # export KUBECONFIG=~/.kube/config
+    # #switch to k3s context
+    # kubectl config use-context default
 }
 if($ConnectCluster) {
     Write-Output "Connecting Cluster"

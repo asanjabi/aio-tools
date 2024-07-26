@@ -3,6 +3,13 @@ set -exuo pipefail
 source ~/.env
 source ~/additional_env
 
+# Check if connected cluster exists
+if az connectedk8s show -n $CLUSTER_NAME -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID &>/dev/null; then
+    echo "Connected cluster $CLUSTER_NAME already exists. Deleting it."
+    # Delete the connected cluster
+    az connectedk8s delete -n $CLUSTER_NAME -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID --yes
+fi
+
 # Connect the cluster to Azure Arc
 # When using proxy server, you need to specify the proxy server IP address and port, and optionally the IP ranges to exclude from the proxy server.
 # If the proxy server requires a certificate, you can specify the path to the certificate file.
@@ -15,13 +22,18 @@ kubernetes_service_ip=$(kubectl get svc kubernetes -o jsonpath='{.spec.clusterIP
 echo "Control Plane IP: $control_plane_ip"
 echo "Kubernetes Service IP: $kubernetes_service_ip"
 
-
-
+# Note on: --proxy-cert /etc/ssl/certs/ca-certificates.crt \
+# Since we already merged the server cert into the client cert store, we can use the client cert store
+# Otherwise we run into issues where files signed by a trusted CA but retrieved from another service not through the proxy won't be trusted.
 az connectedk8s connect -n $CLUSTER_NAME -l $LOCATION -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID \
-    --proxy-https $https_proxy --proxy-http $http_proxy \
+    --proxy-https $https_proxy \
+    --proxy-http $http_proxy \
     --proxy-skip-range $control_plane_ip,$kubernetes_service_ip,127.0.0.0/16,10.0.0.0/8,kubernetes.default.svc,.svc.cluster.local,.svc \
-    --proxy-cert $certfile_crt \
-    --debug
+    --debug \
+    --proxy-cert $certfile_crt
+#    --proxy-cert /etc/ssl/certs/ca-certificates.crt 
+    
+
   
 
 kubectl get deployments,pods -n azure-arc
