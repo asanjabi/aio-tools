@@ -1,0 +1,75 @@
+
+#Update all packages
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+
+runcmd:
+  # Take a snapshot of the current inotify and file-max settings
+  - cat /proc/sys/fs/inotify/max_user_instances
+  - cat /proc/sys/fs/inotify/max_user_watches
+  - cat /proc/sys/fs/file-max
+
+  # update the inotify and file-max settings to recommended values
+  - echo fs.inotify.max_user_instances=8192 | sudo tee -a /etc/sysctl.conf
+  - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+  - echo fs.file-max = 100000 | sudo tee -a /etc/sysctl.conf
+
+  # Apply the changes
+  - sudo sysctl -p
+
+  # Take a snapshot after update    
+  - cat /proc/sys/fs/inotify/max_user_instances
+  - cat /proc/sys/fs/inotify/max_user_watches
+  - cat /proc/sys/fs/file-max
+
+  # Install k3s
+  - | 
+    curl -sfL https://get.k3s.io |\
+       INSTALL_K3S_EXEC="
+       --tls-san aio-vm-north-eu.mshome.net
+       " \
+       sh - 
+
+  # write this to logs so that we can see the environment variables that were set
+  - sudo cat /etc/systemd/system/k3s.service.env
+
+
+  # Setup for debuggging
+  - |
+    mkdir -p ~/.kube
+    sudo cp -f /etc/rancher/k3s/k3s.yaml ~/.kube/config
+    sudo chown ubuntu:ubuntu ~/.kube/config
+    chmod  0600 ~/.kube/config
+    export KUBECONFIG=~/.kube/config
+
+    # Add KUBECONFIG to .bashrc if it doesn't exist
+    if ! grep -q "export KUBECONFIG=~/.kube/config" ~/.bashrc; then
+      echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
+    fi
+
+  - |
+    # Wait for k3s to be ready
+    while [ ! -f /var/lib/rancher/k3s/server/node-token ]; do
+      echo "Waiting for k3s to be ready"
+      sleep 5
+    done
+
+  - |
+    client_version=$(kubectl version --client | awk '{print $3}')
+    required_version="v1.31.0"
+
+    if [[ "$(printf '%s\n' "$client_version" "$required_version" | sort -V | head -n1)" != "$required_version" ]]; then
+        echo "This client doesn't support wait --for=create Waiting for 60 seconds instead."
+        sleep 60
+    else
+        kubectl wait --for=create pod -l k8s-app=kube-dns -n $namespace --timeout=$timeout
+        kubectl wait --for=create pod -l k8s-app=metrics-server -n $namespace --timeout=$timeout
+        kubectl wait --for=create pod -l app=local-path-provisioner -n $namespace --timeout=$timeout
+    fi
+
+
+    kubectl wait --for=condition=ready pod -l k8s-app=kube-dns -n $namespace --timeout=$timeout
+    kubectl wait --for=condition=ready pod -l k8s-app=metrics-server -n $namespace --timeout=$timeout
+    kubectl wait --for=condition=ready pod -l app=local-path-provisioner -n $namespace --timeout=$timeout

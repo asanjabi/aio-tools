@@ -41,7 +41,7 @@ cat /proc/sys/fs/file-max
 
 # Install k9s
 sudo snap install k9s
-#bun in installer
+#bug in installer
 sudo ln -s /snap/k9s/current/bin/k9s /usr/bin
 
 
