@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "stateful.runme",
+        "foxundermoon.shell-format",
+        "esbenp.prettier-vscode",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-yaml-preamble",
+        "bierner.github-markdown-preview"
+    ]
+}
