@@ -17,7 +17,7 @@ sudo apt-get update
 sudo apt-get install --only-upgrade azure-cli
 ```
 
-If you run into issues installing Azure CLI see look at this document [Troubleshooting Azure CLI Installation](/linux/configure_local_environment/troubleshoot_Azure_CLI_Install_linux.md)
+If you run into issues installing Azure CLI see look at this document [Troubleshooting Azure CLI Installation](linux/configure_local_environment/troubleshoot_Azure_CLI_Install_linux.md)
 
 ## 2. Install Required Azure CLI extensions
 
@@ -66,7 +66,10 @@ Install kubectl if it is not installed
 
 ```bash
 if ! command -v kubectl &>/dev/null; then
-    execute sudo snap install kubectl --classic
+    sudo snap install kubectl --classic
+    echo "kubectl installed"
+    else
+    echo "kubectl already installed"
 fi
 ```
 
@@ -95,8 +98,8 @@ fi
 
 ```bash
 if ! command -v k9s &>/dev/null; then
-    execute sudo snap install k9s
+    sudo snap install k9s
     #bug in installer
-    execute sudo ln -s /snap/k9s/current/bin/k9s /usr/bin
+    sudo ln -s /snap/k9s/current/bin/k9s /usr/bin
 fi
 ```
