@@ -19,3 +19,17 @@ DISM /Online /Enable-Feature /All /FeatureName:Microsoft-Hyper-V /NoRestart
 * Update Azure CLI section fails in a fresh install of WSL if you run all the scripts
 
 * Add more navigation links to the docs
+* Azure CLI install in WSL will require restart for path
+* Look into Snap --classic and why snap bin is not in the path, what is the right thing to do about this
+
+
+* Add validation step at the end of each section to make sure everything is fine
+
+* Links to non md fils might not be obvious to users when they need to edit them
+* Multiple users ran into login issues
+    * Had to login twice if not logged in
+    * If logged in, in one occasion required to redo MFA
+    * Potentially log out and login at the beginning to make sure things go smoothly
+
+* Include notes about cloud-init why and how 
+* Document cloud-init files

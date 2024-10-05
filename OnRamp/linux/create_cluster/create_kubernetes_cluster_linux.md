@@ -17,10 +17,10 @@ if you change your VM name from aio search the userdata.yaml file for line `--tl
 
 * Make sure to change the cloudInit_path if you are using a different file.
 * Make other adjustments to the vm configuration as needed
-* Recommended values are:  
-    * vm_cores=8  
-    * vm_memory=16G  
-    * vm_disk=20G  
+* Recommended values are:
+   * vm_cores=8
+   * vm_memory=16G
+   * vm_disk=20G
 
 ```bash
 source ./multipass/utilities.sh
